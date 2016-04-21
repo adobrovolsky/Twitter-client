@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="200dp"
+        >
+
+    <EditText
+            android:id="@+id/tweetMessage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:inputType="textMultiLine"
+            android:padding="15dp"
+            android:textSize="18sp"
+            android:gravity="start"
+            android:hint="@string/hint_tweet"
+            android:textColorHint="@android:color/darker_gray"
+            android:background="@android:color/transparent"
+            tools:text="These are attributes which are used when the layout is rendered in the tool, but have no impact on the runtime."
+            />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/tweet_toolbar_background"
+            >
+
+        <ImageButton
+                android:id="@+id/addPictureButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_add_picture"
+                android:src="@mipmap/ic_image"
+                />
+
+        <ImageButton
+                android:id="@+id/addPhotoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_add_photo"
+                android:src="@mipmap/ic_camera"
+                />
+
+        <TextView
+                android:id="@+id/charCounter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end"
+                />
+
+        <ImageButton
+                android:id="@+id/postTweetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_post_tweet"
+                android:src="@mipmap/ic_send"
+                />
+
+    </LinearLayout>
+
+</LinearLayout>

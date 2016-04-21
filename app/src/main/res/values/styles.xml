@@ -1,0 +1,26 @@
+<resources>
+    
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
+    
+    <style name="AppDefault" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:dialogTheme">@style/AppDialog</item>
+        <item name="android:actionModeStyle">@style/AppActionMode</item>
+    </style>
+
+    <style name="AppDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowMinWidthMajor">80%</item>
+        <item name="android:windowMinWidthMinor">80%</item>
+    </style>
+
+    <style name="AppActionMode" parent="Widget.AppCompat.ActionMode">
+        <item name="android:actionModeCloseDrawable">@mipmap/ic_check</item>
+        <item name="android:actionModeBackground">@color/colorPrimary</item>
+    </style>
+
+</resources>

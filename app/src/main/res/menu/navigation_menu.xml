@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/navigation_item_home"
+          android:orderInCategory="1"
+          android:checked="true"
+          android:title="@string/navigation_item_home"
+          android:icon="@mipmap/ic_home"/>
+
+    <item android:id="@+id/navigation_item_notification"
+          android:orderInCategory="2"
+          android:title="@string/navigation_item_notification"
+          android:icon="@mipmap/ic_twitter"/>
+
+    <item android:id="@+id/navigation_item_drafts"
+          android:orderInCategory="3"
+          android:title="@string/navigation_item_drafts"
+          android:icon="@mipmap/ic_content_save"/>
+
+    <item android:id="@+id/navigation_item_settings"
+          android:orderInCategory="4"
+          android:title="@string/navigation_item_settings"
+          android:icon="@android:drawable/ic_menu_manage"/>
+</menu>
