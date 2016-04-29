@@ -17,6 +17,6 @@ public abstract class BaseLceFragment<CV extends View, M, V extends MvpLceView<M
     }
 
     @Override public void showAuthentication() {
-        new IntentStarter().showAuthentication();
+        new IntentStarter().showAuthentication(getActivity());
     }
 }

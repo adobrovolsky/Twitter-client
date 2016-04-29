@@ -12,25 +12,27 @@ import android.util.Log;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class DraftsPresenter extends DraftsContract.Presenter
         implements LoaderManager.LoaderCallbacks<List<Draft>> {
 
     private static final int DRAFTS_QUERY = 1;
     private static final String TAG = DraftsPresenter.class.getSimpleName();
 
-    private DraftsLoader mLoader;
-    private DraftsRepository mRepository;
-    private LoaderManager mLoaderManager;
+    private final DraftsLoader loader;
+    private final DraftsRepository repository;
+    private final LoaderManager loaderManager;
 
-    public DraftsPresenter(DraftsLoader loader,
+    @Inject public DraftsPresenter(DraftsLoader loader,
                            DraftsRepository repository, LoaderManager loaderManager) {
-        mLoader = loader;
-        mRepository = repository;
-        mLoaderManager = loaderManager;
+        this.loader = loader;
+        this.repository = repository;
+        this.loaderManager = loaderManager;
     }
 
     @Override public void loadDrafts(boolean pullToRefresh) {
-        mRepository.refresh();
+        repository.refresh();
 
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "::loadDrafts()");
@@ -38,7 +40,7 @@ public class DraftsPresenter extends DraftsContract.Presenter
     }
 
     @Override void removeDraft(Draft draft) {
-        mRepository.delete(draft);
+        repository.delete(draft);
 
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "::removeDraft()");
@@ -47,16 +49,16 @@ public class DraftsPresenter extends DraftsContract.Presenter
 
     @Override public void attachView(DraftsContract.View view) {
         super.attachView(view);
-        mLoaderManager.initLoader(DRAFTS_QUERY, null, this);
+        loaderManager.initLoader(DRAFTS_QUERY, null, this);
     }
 
     @Override public void detachView(boolean retainInstance) {
         super.detachView(retainInstance);
-        mLoaderManager.destroyLoader(DRAFTS_QUERY);
+        loaderManager.destroyLoader(DRAFTS_QUERY);
     }
 
     @Override public Loader<List<Draft>> onCreateLoader(int id, Bundle args) {
-        return mLoader;
+        return loader;
     }
 
     @Override public void onLoadFinished(Loader<List<Draft>> loader, List<Draft> data) {

@@ -1,4 +1,4 @@
-package com.twitty;
+package com.twitty.util;
 
 public class Constants {
 

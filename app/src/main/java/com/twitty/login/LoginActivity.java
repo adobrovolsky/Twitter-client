@@ -2,6 +2,7 @@ package com.twitty.login;
 
 import com.hannesdorfmann.mosby.mvp.viewstate.MvpViewStateActivity;
 import com.hannesdorfmann.mosby.mvp.viewstate.ViewState;
+import com.twitty.MainApplication;
 import com.twitty.R;
 
 import android.content.Intent;
@@ -21,11 +22,14 @@ public class LoginActivity extends MvpViewStateActivity<LoginContract.LoginView,
     public static final String EXTRA_VERIFIER = "com.twitty.login.verifier";
     private static final String TAG_DIALOG_OAUTH = "oauth_dialog";
 
-    @Bind(R.id.authButton) Button mAuthButton;
-    @Bind(R.id.loadingView) View mLoadingView;
-    @Bind(R.id.errorView) TextView mErrorView;
+    @Bind(R.id.authButton) Button authButton;
+    @Bind(R.id.loadingView) View loadingView;
+    @Bind(R.id.errorView) TextView errorView;
+
+    LoginComponent component;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
+        injectDependencies();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
@@ -40,7 +44,7 @@ public class LoginActivity extends MvpViewStateActivity<LoginContract.LoginView,
     }
 
     @NonNull @Override public LoginPresenter createPresenter() {
-        return new LoginPresenter();
+        return component.getPresenter();
     }
 
     @OnClick(R.id.authButton) public void onLoginClicked() {
@@ -54,39 +58,46 @@ public class LoginActivity extends MvpViewStateActivity<LoginContract.LoginView,
     @Override public void onNewViewStateInstance() {
         LoginViewState loginViewState = (LoginViewState) viewState;
         loginViewState.setShowAuthForm();
-        mErrorView.setVisibility(View.GONE);
-        mLoadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
     }
 
     @Override public void showAuthForm() {
         LoginViewState loginViewState = (LoginViewState) viewState;
         loginViewState.setShowAuthForm();
-        mErrorView.setVisibility(View.GONE);
-        mLoadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
     }
 
     @Override public void showError() {
         LoginViewState loginViewState = (LoginViewState) viewState;
         loginViewState.setShowError();
-        mErrorView.setVisibility(View.VISIBLE);
-        mLoadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+        loadingView.setVisibility(View.GONE);
     }
 
     @Override public void showLoading() {
         LoginViewState loginViewState = (LoginViewState) viewState;
         loginViewState.setShowLoading();
-        mErrorView.setVisibility(View.GONE);
-        mLoadingView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.VISIBLE);
     }
 
     @Override public void showOAuthDialog(String authorizationUrl) {
-        mErrorView.setVisibility(View.GONE);
-        mLoadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
         OAuthDialog.newInstance(authorizationUrl)
                 .show(getSupportFragmentManager(), TAG_DIALOG_OAUTH);
     }
 
     @Override public void loginSuccessful() {
         finish();
+    }
+
+    protected void injectDependencies() {
+        component = DaggerLoginComponent.builder()
+                .applicationComponent(MainApplication.getAppComponent())
+                .build();
+        component.inject(this);
     }
 }

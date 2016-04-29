@@ -1,8 +1,8 @@
 package com.twitty.login;
 
-import com.twitty.Constants;
 import com.twitty.IntentStarter;
 import com.twitty.R;
+import com.twitty.util.Constants;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,8 +19,8 @@ public class OAuthDialog extends DialogFragment {
 
     private static final String ARG_AUTHORIZATION_URL = "authorization_url";
 
-    private WebView mWebView;
-    private String mAuthorizationUrl;
+    private WebView webView;
+    private String authorizationUrl;
 
     public static OAuthDialog newInstance(String authorizationUrl) {
         final Bundle args = new Bundle();
@@ -33,7 +33,7 @@ public class OAuthDialog extends DialogFragment {
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuthorizationUrl = getArguments().getString(ARG_AUTHORIZATION_URL);
+        authorizationUrl = getArguments().getString(ARG_AUTHORIZATION_URL);
     }
 
     @Nullable @Override
@@ -43,10 +43,10 @@ public class OAuthDialog extends DialogFragment {
 
     @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mWebView = (WebView) view.findViewById(R.id.webView);
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.loadUrl(mAuthorizationUrl);
-        mWebView.setWebViewClient(new AuthWebViewClient());
+        webView = (WebView) view.findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl(authorizationUrl);
+        webView.setWebViewClient(new AuthWebViewClient());
     }
 
     private class AuthWebViewClient extends WebViewClient {
@@ -60,7 +60,7 @@ public class OAuthDialog extends DialogFragment {
                 final String oauthVerifier = uri.getQueryParameter(Constants.OAUTH_VERIFIER);
                 dismiss();
 
-                new IntentStarter().showLoginActivity(oauthVerifier);
+                new IntentStarter().showLoginActivity(getActivity(), oauthVerifier);
 
             } else if (url.contains(Constants.DENIED)) {
                 dismiss();

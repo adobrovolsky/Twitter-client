@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.hannesdorfmann.mosby.mvp.delegate.BaseMvpViewStateDelegateCallback
 import com.hannesdorfmann.mosby.mvp.viewstate.ViewState
 import com.twitty.IntentStarter
+import com.twitty.MainApplication
 import com.twitty.R
 import com.twitty.base.MvpViewStateDialogFragment
 import com.twitty.store.entity.Draft
@@ -28,6 +29,8 @@ class WriteDialog : MvpViewStateDialogFragment<WriteView, WritePresenter>(),
     private val intentStarter = IntentStarter()
     private var draft: Draft? = null
 
+    lateinit var component: WriteComponent
+
     companion object Companion {
 
         val argumentStatus = "argument_status"
@@ -37,6 +40,11 @@ class WriteDialog : MvpViewStateDialogFragment<WriteView, WritePresenter>(),
             val dialog = WriteDialog().apply { arguments = args }
             return dialog
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -59,14 +67,14 @@ class WriteDialog : MvpViewStateDialogFragment<WriteView, WritePresenter>(),
 
         addPhotoButton?.setOnClickListener {
             if (intentStarter.isIntentAvailable(MediaStore.ACTION_IMAGE_CAPTURE))
-                intentStarter.startCameraApp(activity)
+                intentStarter.openCamera(activity)
             else
                 Toast.makeText(activity, "Camera app not found", Toast.LENGTH_SHORT).show()
         }
 
         addPictureButton?.setOnClickListener {
             if (intentStarter.isIntentAvailable(Intent.ACTION_PICK))
-                intentStarter.startImagePicker(activity)
+                intentStarter.openImagePicker(activity)
         }
 
         postTweetButton?.setOnClickListener {
@@ -78,7 +86,7 @@ class WriteDialog : MvpViewStateDialogFragment<WriteView, WritePresenter>(),
             }
             if (draft == null) {
                 saved = false
-                draft = Draft(id = null, text = status)
+                draft = Draft(null, status, null)
             }
             presenter.postTweet(draft as Draft, saved)
         }
@@ -93,7 +101,7 @@ class WriteDialog : MvpViewStateDialogFragment<WriteView, WritePresenter>(),
         val status = tweetMessage?.text.toString()
         if (status.isNotEmpty()) {
             if (draft == null) {
-                draft = Draft(id = null, text = status, created = Date())
+                draft = Draft(null, status, Date())
             }
             presenter.saveTweet(draft as Draft)
             Toast.makeText(activity, R.string.notification_tweet_saved, Toast.LENGTH_SHORT).show()
@@ -114,16 +122,12 @@ class WriteDialog : MvpViewStateDialogFragment<WriteView, WritePresenter>(),
     }
 
     override fun createPresenter(): WritePresenter {
-        return WritePresenter(activity)
+        return component.getPresenter()
     }
 
     override fun getMvpView(): WriteView? {
         return this
     }
-
-    //
-    // View implementation
-    //
 
     override fun showForm() {
 
@@ -139,5 +143,12 @@ class WriteDialog : MvpViewStateDialogFragment<WriteView, WritePresenter>(),
 
     override fun finishWrite() {
 
+    }
+
+    protected fun injectDependencies() {
+        component = DaggerWriteComponent.builder()
+                .userComponent(MainApplication.getUserComponent())
+                .build()
+        component.inject(this)
     }
 }

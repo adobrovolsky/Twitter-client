@@ -13,24 +13,24 @@ public class TweetsViewPagerAdapter extends FragmentPagerAdapter {
 
     public static final int TWEETS_FRAGMENT = 0;
 
-    private Map<Integer, BaseLceFragment> mFragments;
+    private Map<Integer, BaseLceFragment> fragments;
 
     public TweetsViewPagerAdapter(FragmentManager fm) {
         super(fm);
-        mFragments = new HashMap<>();
-        mFragments.put(TWEETS_FRAGMENT, new TweetsFragment());
+        fragments = new HashMap<>();
+        fragments.put(TWEETS_FRAGMENT, new TweetsFragment());
     }
 
     @Override public Fragment getItem(int position) {
-        return mFragments.get(position);
+        return fragments.get(position);
     }
 
     @Override public int getCount() {
-        return mFragments.size();
+        return fragments.size();
     }
 
     @Override public CharSequence getPageTitle(int position) {
-        return mFragments.get(position).getTitle();
+        return fragments.get(position).getTitle();
     }
 
 }

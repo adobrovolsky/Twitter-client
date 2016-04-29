@@ -1,10 +1,10 @@
 package com.twitty.drafts;
 
 import com.hannesdorfmann.mosby.mvp.lce.MvpLceActivity;
+import com.twitty.MainApplication;
 import com.twitty.R;
+import com.twitty.dagger.modules.ViewModule;
 import com.twitty.drafts.DraftsAdapter.DraftViewHolder;
-import com.twitty.store.DraftsLoader;
-import com.twitty.store.DraftsRepository;
 import com.twitty.store.entity.Draft;
 import com.twitty.write.WriteDialog;
 
@@ -32,24 +32,25 @@ public class DraftsActivity
 
     private static final String TAG_WRITE_DIALOG = "write_dialog";
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.recyclerView) RecyclerView mRecyclerView;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.recyclerView) RecyclerView recyclerView;
 
-    private DraftsAdapter mAdapter;
+    private DraftsAdapter adapter;
+    DraftsComponent component;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
+        injectDependencies();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drafts);
         ButterKnife.bind(this);
         contentView.setOnRefreshListener(this);
-
         initToolbar();
         initRecyclerView();
         loadData(false);
     }
 
     private void initToolbar() {
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -57,9 +58,9 @@ public class DraftsActivity
     }
 
     private void initRecyclerView() {
-        mAdapter = new DraftsAdapter(null, this);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mAdapter);
+        adapter = new DraftsAdapter(null, this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
     }
 
     @Override public void loadData(boolean pullToRefresh) {
@@ -93,14 +94,12 @@ public class DraftsActivity
     }
 
     @Override public DraftsContract.Presenter createPresenter() {
-        DraftsRepository draftsRepository = new DraftsRepository();
-        DraftsLoader draftsLoader = new DraftsLoader(this, draftsRepository);
-        return new DraftsPresenter(draftsLoader, draftsRepository, getSupportLoaderManager());
+        return component.getPresenter();
     }
 
     @Override public void setData(List<Draft> data) {
-        mAdapter.setData(data);
-        mAdapter.notifyDataSetChanged();
+        adapter.setData(data);
+        adapter.notifyDataSetChanged();
     }
 
     @Override public void showContent() {
@@ -143,14 +142,21 @@ public class DraftsActivity
 
     @Override public void onDestroyActionMode(ActionMode mode) { /* NOP */ }
 
-    @Override public void onItemClick(int position, View v) {
-        Draft draft = mAdapter.getDraft(position);
+    @Override public void onItemClick(int position, View view) {
+        Draft draft = adapter.getDraft(position);
         WriteDialog.newInstance(draft)
                 .show(getSupportFragmentManager(), TAG_WRITE_DIALOG);
     }
 
-    @Override public void onItemLongClick(int position, View v) {
-        startSupportActionMode(this)
-                .setTag(mAdapter.getDraft(position));
+    @Override public void onItemLongClick(int position, View view) {
+        startSupportActionMode(this).setTag(adapter.getDraft(position));
+    }
+
+    protected void injectDependencies() {
+        component = DaggerDraftsComponent.builder()
+                .userComponent(MainApplication.getUserComponent())
+                .mvpModule(new ViewModule(getSupportLoaderManager()))
+                .build();
+        component.inject(this);
     }
 }

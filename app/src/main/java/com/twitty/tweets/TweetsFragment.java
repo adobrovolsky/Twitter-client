@@ -1,5 +1,6 @@
 package com.twitty.tweets;
 
+import com.twitty.MainApplication;
 import com.twitty.R;
 import com.twitty.base.BaseLceFragment;
 
@@ -24,11 +25,13 @@ public class TweetsFragment
         implements TweetsView, SwipeRefreshLayout.OnRefreshListener,
         TweetAdapter.PersonClickListener, TweetAdapter.OnMenuItemClickListener {
 
-    @Bind(R.id.recyclerView) RecyclerView mRecyclerView;
+    @Bind(R.id.recyclerView) RecyclerView recyclerView;
 
-    private TweetAdapter mAdapter;
+    private TweetAdapter adapter;
+    TweetsComponent component;
 
     @Override public void onCreate(Bundle savedInstanceState) {
+        injectDependencies();
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
@@ -48,9 +51,9 @@ public class TweetsFragment
     }
 
     private void initRecyclerView() {
-        mAdapter = new TweetAdapter(getActivity(), this, this);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(mAdapter);
+        adapter = new TweetAdapter(getActivity(), this, this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(adapter);
     }
 
     @Override protected String getErrorMessage(Throwable e, boolean pullToRefresh) {
@@ -60,13 +63,13 @@ public class TweetsFragment
     }
 
     @Override public TweetsPresenter createPresenter() {
-        return new TweetsPresenter();
+        return component.getPresenter();
     }
 
     @Override public void setData(ResponseList<Status> data) {
         loadingView.setVisibility(View.GONE);
-        mAdapter.setStatuses(data);
-        mAdapter.notifyDataSetChanged();
+        adapter.setStatuses(data);
+        adapter.notifyDataSetChanged();
     }
 
     @Override public void loadData(boolean pullToRefresh) {
@@ -103,11 +106,18 @@ public class TweetsFragment
     @Override public void onMenuItemClick(MenuItem item, int position) {
         switch (item.getItemId()) {
             case R.id.tweet_menu_item_retweet:
-                Status status = mAdapter.getStatus(position);
+                Status status = adapter.getStatus(position);
                 presenter.retweet(status.getId());
                 break;
             case R.id.tweet_menu_item_reply:
                break;
         }
+    }
+
+    protected void injectDependencies() {
+        component = DaggerTweetsComponent.builder()
+                .userComponent(MainApplication.getUserComponent())
+                .build();
+        component.inject(this);
     }
 }

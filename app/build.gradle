@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 23
@@ -21,30 +21,46 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
-    }
-    retrolambda {
-        jdk System.getenv("JAVA8_HOME")
-        oldJdk System.getenv("JAVA7_HOME")
-        javaVersion JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
     }
+    kapt {
+        generateStubs = true
+    }
 }
 
+def appcompatVersion = "23.2.0"
+def mosbyVersion = "2.0.1"
+def butterknifeVersion = "7.0.1"
+def twitter4jVersion = "4.0.1"
+def picassoVersion = "2.5.2"
+def daggerVersion = "2.2"
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.0'
-    compile 'com.android.support:cardview-v7:23.2.0'
-    compile 'com.android.support:design:23.2.0'
+
+    compile "com.android.support:appcompat-v7:$appcompatVersion"
+    compile "com.android.support:cardview-v7:$appcompatVersion"
+    compile "com.android.support:design:$appcompatVersion"
+
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
-    compile 'com.hannesdorfmann.mosby:viewstate:2.0.1'
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'org.twitter4j:twitter4j-core:4.0.1'
-    compile 'org.twitter4j:twitter4j-async:4.0.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile "com.hannesdorfmann.mosby:mvp:$mosbyVersion"
+    compile "com.hannesdorfmann.mosby:viewstate:$mosbyVersion"
+
+    compile "com.jakewharton:butterknife:$butterknifeVersion"
+    compile "org.twitter4j:twitter4j-core:$twitter4jVersion"
+    compile "org.twitter4j:twitter4j-async:$twitter4jVersion"
+    compile "com.squareup.picasso:picasso:$picassoVersion"
+
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.jakewharton:butterknife:$butterknifeVersion"
+
+//    apt "com.google.dagger:dagger-compiler:$daggerVersion"
+    compile "com.google.dagger:dagger:$daggerVersion"
+    provided 'javax.annotation:jsr250-api:1.0'
 }

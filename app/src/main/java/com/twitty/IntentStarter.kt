@@ -15,18 +15,20 @@ import java.util.*
 
 class IntentStarter {
 
-   fun showLoginActivity(arg: String) {
-       val intent = Intent(MainApplication.getContext(), LoginActivity::class.java)
+    val appContext = MainApplication.getContext()
+
+    fun showLoginActivity(context: Context, arg: String) {
+       val intent = Intent(context, LoginActivity::class.java)
        intent.putExtra(LoginActivity.EXTRA_VERIFIER, arg)
-       MainApplication.getContext().startActivity(intent)
+        context.startActivity(intent)
     }
 
-   fun showAuthentication() {
-       val intent = Intent(MainApplication.getContext(), LoginActivity::class.java)
-       MainApplication.getContext().startActivity(intent)
+    fun showAuthentication(context: Context) {
+       val intent = Intent(context, LoginActivity::class.java)
+        context.startActivity(intent)
     }
 
-   fun startCameraApp(context: FragmentActivity) {
+    fun openCamera(context: FragmentActivity) {
         val takePhoto = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val file = File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
@@ -35,18 +37,18 @@ class IntentStarter {
         context.startActivityForResult(takePhoto, MainActivity.REQUEST_IMAGE_CAPTURE)
     }
 
-    fun startImagePicker(context: FragmentActivity) {
+    fun openImagePicker(context: FragmentActivity) {
         val pickImage = Intent(Intent.ACTION_PICK)
         context.startActivityForResult(pickImage, MainActivity.REQUEST_PICK_IMAGE)
     }
 
     fun showDrafts(context: Context) {
-        val intent = Intent(MainApplication.getContext(), DraftsActivity::class.java)
+        val intent = Intent(context, DraftsActivity::class.java)
         context.startActivity(intent)
     }
 
     fun isIntentAvailable(action: String) : Boolean {
-        val packageManager = MainApplication.getContext().packageManager
+        val packageManager = appContext.packageManager
         val resolveInfo = packageManager.queryIntentActivities(
                 Intent(action), PackageManager.MATCH_DEFAULT_ONLY)
         return resolveInfo.size > 0

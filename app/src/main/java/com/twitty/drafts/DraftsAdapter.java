@@ -17,12 +17,12 @@ import butterknife.ButterKnife;
 
 public class DraftsAdapter extends RecyclerView.Adapter<DraftsAdapter.DraftViewHolder> {
 
-    private List<Draft> mDrafts;
-    private static DraftViewHolder.ClickListener mClickListener;
+    private List<Draft> drafts;
+    private static DraftViewHolder.ClickListener clickListener;
 
     public DraftsAdapter(List<Draft> drafts, DraftViewHolder.ClickListener clickListener) {
-        mDrafts = drafts;
-        mClickListener = clickListener;
+        this.drafts = drafts;
+        this.clickListener = clickListener;
     }
 
     @Override public DraftViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -32,28 +32,28 @@ public class DraftsAdapter extends RecyclerView.Adapter<DraftsAdapter.DraftViewH
     }
 
     @Override public int getItemCount() {
-        return mDrafts == null ? 0 : mDrafts.size();
+        return drafts == null ? 0 : drafts.size();
     }
 
     @Override public void onBindViewHolder(DraftViewHolder holder, int position) {
-        final Draft draft = mDrafts.get(position);
+        final Draft draft = drafts.get(position);
         holder.text.setText(draft.getText());
     }
 
     public void setData(List<Draft> data) {
-        mDrafts = data;
+        drafts = data;
     }
 
     public Draft getDraft(int position) {
-        return mDrafts.get(position);
+        return drafts.get(position);
     }
 
     static class DraftViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {
 
         interface ClickListener {
-            void onItemClick(int position, View v);
-            void onItemLongClick(int position, View v);
+            void onItemClick(int position, View view);
+            void onItemLongClick(int position, View view);
         }
 
         @Bind(R.id.text) TextView text;
@@ -67,12 +67,12 @@ public class DraftsAdapter extends RecyclerView.Adapter<DraftsAdapter.DraftViewH
             cardView.setOnLongClickListener(this);
         }
 
-        @Override public void onClick(View v) {
-            mClickListener.onItemClick(getAdapterPosition(), v);
+        @Override public void onClick(View view) {
+            clickListener.onItemClick(getAdapterPosition(), view);
         }
 
-        @Override public boolean onLongClick(View v) {
-            mClickListener.onItemLongClick(getAdapterPosition(), v);
+        @Override public boolean onLongClick(View view) {
+            clickListener.onItemLongClick(getAdapterPosition(), view);
             return true;
         }
     }

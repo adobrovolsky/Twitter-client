@@ -1,18 +1,16 @@
 package com.twitty.login;
 
 import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
-import com.twitty.AppPreferences;
 import com.twitty.BuildConfig;
-import com.twitty.Constants;
 import com.twitty.util.TwitterUtil;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
@@ -20,17 +18,16 @@ public class LoginPresenter extends MvpBasePresenter<LoginContract.LoginView> {
 
     private static final String TAG = LoginPresenter.class.getSimpleName();
 
-    private final Twitter mTwitter;
-    private final AppPreferences mPrefs;
+    private final Twitter twitter;
+    private final TwitterUtil twitterUtil;
 
-    public LoginPresenter() {
-        mPrefs = AppPreferences.getInstance();
-        mTwitter = new TwitterFactory().getInstance();
-        mTwitter.setOAuthConsumer(Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
+    @Inject public LoginPresenter(Twitter twitter, TwitterUtil twitterUtil) {
+        this.twitter = twitter;
+        this.twitterUtil = twitterUtil;
     }
 
     public void doLogin() {
-        if (TwitterUtil.isAuthenticated()) {
+        if (twitterUtil.isAuthenticated()) {
             if (isViewAttached()) {
                 getView().loginSuccessful();
             }
@@ -53,7 +50,7 @@ public class LoginPresenter extends MvpBasePresenter<LoginContract.LoginView> {
 
         @Override protected RequestToken doInBackground(Void ... params) {
             try {
-                RequestToken requestToken = mTwitter.getOAuthRequestToken();
+                RequestToken requestToken = twitter.getOAuthRequestToken();
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, "GetRequestTokenTask::doInBackground");
                     Log.d(TAG, "Request token = " + requestToken.getToken());
@@ -87,7 +84,7 @@ public class LoginPresenter extends MvpBasePresenter<LoginContract.LoginView> {
         @Override protected AccessToken doInBackground(String ... params) {
             try {
                 final String verifier = params[0];
-                AccessToken accessToken = mTwitter.getOAuthAccessToken(verifier);
+                AccessToken accessToken = twitter.getOAuthAccessToken(verifier);
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, "GetAccessTokenTask::doInBackground");
                     Log.d(TAG, "Access token = " + accessToken.getToken());
@@ -101,7 +98,7 @@ public class LoginPresenter extends MvpBasePresenter<LoginContract.LoginView> {
 
         @Override protected void onPostExecute(AccessToken accessToken) {
             if (accessToken != null) {
-                mPrefs.setAccessToken(accessToken.getToken(), accessToken.getTokenSecret());
+               twitterUtil.login(accessToken.getToken(), accessToken.getTokenSecret());
                 if (isViewAttached()) {
                     getView().loginSuccessful();
                 }
