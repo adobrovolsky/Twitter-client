@@ -4,4 +4,13 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="error_view_text_size">16sp</dimen>
+
+    <dimen name="tweet_avatar_width">40dp</dimen>
+    <dimen name="tweet_avatar_height">40dp</dimen>
+    <dimen name="tweet_avatar_margin_right">6dp</dimen>
+    <dimen name="tweet_cardview_elevation">2dp</dimen>
+    <dimen name="tweet_cardview_padding">6dp</dimen>
+    <dimen name="tweet_user_name_margin_right">5dp</dimen>
+    <dimen name="tweet_user_name_text_size">18sp</dimen>
+    <dimen name="tweet_screen_name_margin_bottom">4dp</dimen>
 </resources>

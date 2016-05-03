@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         tools:context="com.twitty.MainActivity"
-        tools:menu="menu"
+        tools:menu="main_menu"
         tools:openDrawer="start"
         >
 
@@ -26,9 +26,9 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="?attr/colorPrimary"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark"
                     android:title="@string/app_name"
+                    android:background="?attr/colorPrimary"
+                    app:theme="@style/ThemeOverlay.AppCompat.Light"
                     />
 
         </android.support.design.widget.AppBarLayout>

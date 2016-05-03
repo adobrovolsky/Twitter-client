@@ -155,7 +155,7 @@ public class DraftsActivity
     protected void injectDependencies() {
         component = DaggerDraftsComponent.builder()
                 .userComponent(MainApplication.getUserComponent())
-                .mvpModule(new ViewModule(getSupportLoaderManager()))
+                .viewModule(new ViewModule(getSupportLoaderManager()))
                 .build();
         component.inject(this);
     }

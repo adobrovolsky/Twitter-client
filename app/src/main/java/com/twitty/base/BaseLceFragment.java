@@ -10,10 +10,10 @@ import android.view.View;
 public abstract class BaseLceFragment<CV extends View, M, V extends MvpLceView<M>, P extends MvpPresenter<V>>
         extends MvpLceFragment<CV, M, V, P> implements AuthView<M> {
 
-    private String mTitle;
+    private String title;
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     @Override public void showAuthentication() {

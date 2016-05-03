@@ -2,6 +2,7 @@ package com.twitty.tweets;
 
 import com.squareup.picasso.Picasso;
 import com.twitty.R;
+import com.twitty.view.ToggleImageButton;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -34,24 +35,41 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.TweetViewHol
         void onMenuItemClick(MenuItem item, int position);
     }
 
+    public interface TweetActionsListener {
+        void onReplyClicked(Status status);
+        void onRetweetClicked(Status status);
+        void onFavoriteClicked(Status status);
+    }
+
     private ResponseList<Status> statuses;
     private PersonClickListener personClickListener;
     private OnMenuItemClickListener itemClickListener;
+    private TweetActionsListener tweetActionsListener;
     private final Context context;
     private final Format format = new SimpleDateFormat("HH:mm MMM dd", Locale.getDefault());
 
-    public TweetAdapter(Context context, ResponseList<Status> statuses,
-                        PersonClickListener personClickListener,
-                        OnMenuItemClickListener itemClickListener) {
+    public TweetAdapter(Context context, ResponseList<Status> statuses) {
         this.context = context;
         this.statuses = statuses;
-        this.personClickListener = personClickListener;
-        this.itemClickListener = itemClickListener;
     }
 
-    public TweetAdapter(Context context, PersonClickListener personClickListener,
-                        OnMenuItemClickListener itemClickListener) {
-        this(context, null, personClickListener, itemClickListener);
+    public TweetAdapter(Context context) {
+        this.context = context;
+    }
+
+    public TweetAdapter setPersonClickListener(PersonClickListener personClickListener) {
+        this.personClickListener = personClickListener;
+        return this;
+    }
+
+    public TweetAdapter setItemClickListener(OnMenuItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+        return this;
+    }
+
+    public TweetAdapter setTweetActionsListener(TweetActionsListener tweetActionsListener) {
+        this.tweetActionsListener = tweetActionsListener;
+        return this;
     }
 
     @Override public TweetViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -68,33 +86,23 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.TweetViewHol
         holder.date.setText(format.format(status.getCreatedAt()));
         holder.tweetMessage.setText(status.getText());
 
-        inflateMenu(holder.toolbar);
+        initTweetToolbar(holder, status);
         loadAvatar(status.getUser().getMiniProfileImageURL(), holder.profileImage);
         loadMedia(status.getMediaEntities(), holder);
-
-        holder.profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                personClickListener.onPersonClicked(status.getUser());
-            }
-        });
-
-        holder.name.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                personClickListener.onPersonClicked(status.getUser());
-            }
-        });
-
-        holder.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override public boolean onMenuItemClick(MenuItem item) {
-                itemClickListener.onMenuItemClick(item, holder.getAdapterPosition());
-                return true;
-            }
-        });
     }
 
-    private void inflateMenu(Toolbar toolbar) {
-        if (toolbar.getMenu().size() == 0) {
-            toolbar.inflateMenu(R.menu.tweet_menu);
+    private void initTweetToolbar(TweetViewHolder holder, Status status) {
+        if (holder.toolbar.getMenu().size() == 0) {
+            holder.toolbar.inflateMenu(R.menu.tweet_menu);
+        }
+
+        holder.retweetButton.setChecked(status.isRetweeted());
+        if (status.getRetweetCount() > 0) {
+            holder.retweetCount.setText(String.valueOf(status.getRetweetCount()));
+        }
+        holder.favoriteButton.setChecked(status.isFavorited());
+        if (status.getFavoriteCount() > 0) {
+            holder.favoriteCount.setText(String.valueOf(status.getFavoriteCount()));
         }
     }
 
@@ -126,19 +134,70 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.TweetViewHol
     }
 
 
-    static class TweetViewHolder extends RecyclerView.ViewHolder {
+    public class TweetViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener, Toolbar.OnMenuItemClickListener {
 
         @Bind(R.id.date) TextView date;
         @Bind(R.id.name) TextView name;
         @Bind(R.id.screenName) TextView screenName;
         @Bind(R.id.tweetMessage) TextView tweetMessage;
-        @Bind(R.id.profileImage) ImageView profileImage;
+        @Bind(R.id.avatar) ImageView profileImage;
         @Bind(R.id.mediaImage) ImageView mediaImage;
+        @Bind(R.id.replyIcon) ToggleImageButton replyButton;
+        @Bind(R.id.retweetIcon) ToggleImageButton retweetButton;
+        @Bind(R.id.favoriteIcon) ToggleImageButton favoriteButton;
+        @Bind(R.id.replyCount) TextView replyCount;
+        @Bind(R.id.retweetCount) TextView retweetCount;
+        @Bind(R.id.favoriteCount) TextView favoriteCount;
         @Bind(R.id.tweetToolbar) Toolbar toolbar;
+        @Bind(R.id.tweetActions) View tweetActions;
 
         public TweetViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            name.setOnClickListener(this);
+            profileImage.setOnClickListener(this);
+            retweetButton.setOnClickListener(this);
+            replyButton.setOnClickListener(this);
+            favoriteButton.setOnClickListener(this);
+            toolbar.setOnMenuItemClickListener(this);
+        }
+
+        @Override public void onClick(View v) {
+            if (tweetActionsListener == null) {
+                return;
+            }
+
+            Status status = statuses.get(getAdapterPosition());
+
+            switch (v.getId()) {
+                case R.id.retweetIcon:
+                    tweetActionsListener.onRetweetClicked(status);
+                    retweetButton.toggle();
+                    break;
+                case R.id.replyIcon:
+                    tweetActionsListener.onReplyClicked(status);
+                    replyButton.toggle();
+                    break;
+                case R.id.favoriteIcon:
+                    tweetActionsListener.onFavoriteClicked(status);
+                    favoriteButton.toggle();
+                    break;
+                case R.id.name:
+                case R.id.avatar:
+                    User user = statuses.get(getAdapterPosition()).getUser();
+                    personClickListener.onPersonClicked(user);
+
+            }
+        }
+
+        @Override public boolean onMenuItemClick(MenuItem item) {
+            if (itemClickListener == null) {
+                return false;
+            }
+            itemClickListener.onMenuItemClick(item, getAdapterPosition());
+            return true;
         }
     }
 }

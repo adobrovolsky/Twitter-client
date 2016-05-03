@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     @Inject TwitterUtil twitterUtil;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
+        injectDependencies();
+
         if (!twitterUtil.isAuthenticated()) {
             intentStarter.showAuthentication(this);
             finish();
@@ -49,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        injectDependencies();
         initToolBar();
         initNavigationView();
         initViewPager();
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    @OnClick public void writeTweet() {
+    @OnClick(R.id.fabWriteTweet) public void writeTweet() {
         new WriteDialog().show(getSupportFragmentManager(), TAG_WRITE_DIALOG);
     }
 

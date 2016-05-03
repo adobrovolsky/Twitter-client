@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:card="http://schemas.android.com/apk/res-auto"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -16,24 +16,25 @@
             android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            card:cardElevation="2dp"
-            card:cardUseCompatPadding="true"
+            app:cardElevation="@dimen/tweet_cardview_elevation"
+            app:cardUseCompatPadding="true"
             >
 
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="6dp"
+                android:padding="@dimen/tweet_cardview_padding"
+                android:background="@color/tweet_cardview_background"
                 >
 
             <ImageView
-                    android:id="@+id/profileImage"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:id="@+id/avatar"
+                    android:layout_width="@dimen/tweet_avatar_width"
+                    android:layout_height="@dimen/tweet_avatar_height"
                     android:scaleType="centerCrop"
-                    android:layout_marginRight="6dp"
-                    android:contentDescription="@string/hint_profile_image"
+                    android:layout_marginRight="@dimen/tweet_avatar_margin_right"
+                    android:contentDescription="@string/hint_avatar"
                     tools:src="@mipmap/ic_account"
                     />
 
@@ -53,8 +54,9 @@
                             android:id="@+id/name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="5dp"
+                            android:layout_marginRight="@dimen/tweet_user_name_margin_right"
                             android:textStyle="bold"
+                            android:textSize="@dimen/tweet_user_name_text_size"
                             tools:text="Test App"
                             />
 
@@ -74,7 +76,7 @@
                         android:id="@+id/screenName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="@dimen/tweet_screen_name_margin_bottom"
                         android:textColor="@color/text_color_secondary"
                         tools:text="\@TestApp"
                         />
@@ -83,6 +85,7 @@
                         android:id="@+id/tweetMessage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/text_color_primary"
                         tools:text="These are attributes which are used when the layout is rendered in the tool, but have no impact on the runtime."
                         />
 
@@ -94,11 +97,94 @@
                         tools:src="@mipmap/ic_twitter"
                         />
 
-                <android.support.v7.widget.Toolbar
-                        android:id="@+id/tweetToolbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize"
-                        />
+                    <LinearLayout
+                            android:id="@+id/tweetActions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            >
+
+                            <LinearLayout
+                                    android:id="@+id/reply"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    style="@style/TweetActionContainer"
+                                    >
+
+                                    <com.twitty.view.ToggleImageButton
+                                            android:id="@+id/replyIcon"
+                                            android:src="@drawable/btn_reply"
+                                            android:contentDescription="@string/reply"
+                                            style="@style/TweetAction"
+                                            />
+
+                                    <TextView
+                                            android:id="@+id/replyCount"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            style="@style/TweetCountTextView"
+                                            tools:text="123"
+                                            />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                    android:id="@+id/retweet"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    style="@style/TweetActionContainer"
+                                    >
+
+                                    <com.twitty.view.ToggleImageButton
+                                            android:id="@+id/retweetIcon"
+                                            android:src="@drawable/btn_retweet"
+                                            android:contentDescription="@string/retweet"
+                                            style="@style/TweetAction"
+                                            />
+
+                                    <TextView
+                                            android:id="@+id/retweetCount"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            style="@style/TweetCountTextView"
+                                            tools:text="123"
+                                            />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                    android:id="@+id/favorite"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    style="@style/TweetActionContainer"
+                                    >
+
+                                    <com.twitty.view.ToggleImageButton
+                                            android:id="@+id/favoriteIcon"
+                                            android:src="@drawable/btn_favorite"
+                                            android:contentDescription="@string/favorite"
+                                            style="@style/TweetAction"
+                                            />
+
+                                    <TextView
+                                            android:id="@+id/favoriteCount"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            style="@style/TweetCountTextView"
+                                            tools:text="123"
+                                            />
+                            </LinearLayout>
+
+                            <android.support.v7.widget.Toolbar
+                                    android:id="@+id/tweetToolbar"
+                                    android:layout_width="0dp"
+                                    android:layout_height="?attr/actionBarSize"
+                                    android:layout_weight="1"
+                                    android:layout_gravity="end"
+                                    />
+
+                    </LinearLayout>
 
             </LinearLayout>
 

@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3f51b5</color>
-    <color name="colorPrimaryDark">#283593</color>
-    <color name="colorAccent">#E91E63</color>
+    <color name="colorPrimary">#8bc34a</color>
+    <color name="colorPrimaryDark">#689f38</color>
+    <color name="colorAccent">#607d8b</color>
+    <color name="colorPrimaryLight">#dcedc8</color>
+
     <color name="tweet_toolbar_background">#d6d6d6</color>
-    <color name="text_color_secondary">#b1b1b1</color>
+    <color name="tweet_cardview_background">#e7e7e7</color>
+    <color name="text_color_secondary">#727272</color>
+    <color name="text_color_primary">#212121</color>
+    <color name="divider_color">#B6B6B6</color>
+
 </resources>

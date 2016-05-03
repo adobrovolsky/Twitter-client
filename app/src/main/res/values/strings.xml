@@ -24,8 +24,11 @@
 
     <string name="screen_name">\@%s</string>
     <string name="hint_tweet">What\'s happening?</string>
-    <string name="hint_profile_image">Profile image</string>
+    <string name="hint_avatar">Profile image</string>
     <string name="notification_tweet_saved">Tweet has been saved in Drafts</string>
     <string name="drafts">Drafts</string>
     <string name="login">Login</string>
+    <string name="reply">Reply</string>
+    <string name="favorite">Favorite</string>
+    <string name="retweet">Retweet</string>
 </resources>

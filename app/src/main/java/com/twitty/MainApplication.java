@@ -1,8 +1,8 @@
 package com.twitty;
 
-import com.twitty.dagger.DaggerApplicationComponent;
-import com.twitty.dagger.DaggerUserComponent;
 import com.twitty.dagger.components.ApplicationComponent;
+import com.twitty.dagger.components.DaggerApplicationComponent;
+import com.twitty.dagger.components.DaggerUserComponent;
 import com.twitty.dagger.components.UserComponent;
 import com.twitty.dagger.modules.ApplicationModule;
 import com.twitty.dagger.modules.NavigationModule;

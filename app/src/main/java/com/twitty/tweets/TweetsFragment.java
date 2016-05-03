@@ -10,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,12 +17,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import twitter4j.ResponseList;
 import twitter4j.Status;
+import twitter4j.StatusUpdate;
 import twitter4j.User;
 
 public class TweetsFragment
-        extends BaseLceFragment<SwipeRefreshLayout, ResponseList<Status>, TweetsView, TweetsPresenter>
-        implements TweetsView, SwipeRefreshLayout.OnRefreshListener,
-        TweetAdapter.PersonClickListener, TweetAdapter.OnMenuItemClickListener {
+        extends BaseLceFragment<SwipeRefreshLayout, ResponseList<Status>, TweetContract.View, TweetsPresenter>
+        implements TweetContract.View, SwipeRefreshLayout.OnRefreshListener, TweetAdapter.PersonClickListener,
+        TweetAdapter.TweetActionsListener {
 
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
 
@@ -51,7 +51,9 @@ public class TweetsFragment
     }
 
     private void initRecyclerView() {
-        adapter = new TweetAdapter(getActivity(), this, this);
+        adapter = new TweetAdapter(getActivity())
+                .setPersonClickListener(this)
+                .setTweetActionsListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
     }
@@ -73,7 +75,7 @@ public class TweetsFragment
     }
 
     @Override public void loadData(boolean pullToRefresh) {
-        presenter.loadTweets(pullToRefresh);
+        presenter.loadHomeTimeLine(pullToRefresh);
     }
 
     @Override public void onRefresh() {
@@ -95,29 +97,36 @@ public class TweetsFragment
         contentView.setRefreshing(pullToRefresh);
     }
 
-    public String getTitle() {
-        return getString(R.string.app_name);
-    }
-
-    @Override public void onPersonClicked(User user) {
-
-    }
-
-    @Override public void onMenuItemClick(MenuItem item, int position) {
-        switch (item.getItemId()) {
-            case R.id.tweet_menu_item_retweet:
-                Status status = adapter.getStatus(position);
-                presenter.retweet(status.getId());
-                break;
-            case R.id.tweet_menu_item_reply:
-               break;
-        }
-    }
-
     protected void injectDependencies() {
         component = DaggerTweetsComponent.builder()
                 .userComponent(MainApplication.getUserComponent())
                 .build();
         component.inject(this);
+    }
+
+    @Override public void onReplyClicked(Status status) {
+        // TODO: open dialog to receive the message
+        StatusUpdate statusUpdate = new StatusUpdate("");
+        presenter.reply(statusUpdate);
+    }
+
+    @Override public void onRetweetClicked(Status status) {
+        if (status.isRetweeted()) {
+            presenter.destroyRetweet(status);
+        } else {
+            presenter.retweet(status);
+        }
+    }
+
+    @Override public void onFavoriteClicked(Status status) {
+        if (status.isFavorited()) {
+            presenter.destroyFavoriteTweet(status.getId());
+        } else {
+            presenter.createFavoriteTweet(status.getId());
+        }
+    }
+
+    @Override public void onPersonClicked(User user) {
+
     }
 }

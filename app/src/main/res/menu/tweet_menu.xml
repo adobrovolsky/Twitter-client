@@ -5,10 +5,10 @@
     <item android:id="@+id/tweet_menu_item_reply"
           android:icon="@mipmap/ic_reply"
           android:title="@string/menu_item_reply"
-          app:showAsAction="ifRoom"/>
+          app:showAsAction="never"/>
 
     <item android:id="@+id/tweet_menu_item_retweet"
           android:icon="@mipmap/ic_twitter_retweet"
           android:title="@string/menu_item_retweet"
-          app:showAsAction="ifRoom"/>
+          app:showAsAction="never"/>
 </menu>
